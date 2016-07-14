@@ -1,19 +1,9 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-library(lubridate)
-library(plyr)
-library(dplyr)
-library(lattice)
-```
+# Reproducible Research: Peer Assessment 1
+
 
 ## Loading and preprocessing the data
-```{r process}
+
+```r
 activity_data <- read.csv("activity.csv")
 summed_by_day <- ddply(activity_data, .(date), function(x) sum(x$steps))
 avg_by_interval <- ddply(activity_data, .(interval), 
@@ -39,39 +29,27 @@ weekend_data <- rbind.fill(avg_by_interval_weekend,
 
 ## What is mean total number of steps taken per day?
 
-```{r histogram_1, echo = F}
-hist(summed_by_day$V1, 
-     xlab = "Number of Steps Per Day", 
-     main = "Number of Steps Per Day Frequency")
-```
+![](PA1_template_files/figure-html/histogram_1-1.png)<!-- -->
 
-```{r median_mean}
+
+```r
 mean_steps_day <- mean(summed_by_day$V1, na.rm = T)
 median_steps_day <-  median(summed_by_day$V1, na.rm = T)
 ```
 
-Mean Steps per day:   `r mean_steps_day`
+Mean Steps per day:   1.0766189\times 10^{4}
 
-Median Steps per day: `r median_steps_day`
+Median Steps per day: 10765
 
 
 ## What is the average daily activity pattern?
-```{r line_plot, echo = F}
-plot(x = avg_by_interval$interval, 
-     y = avg_by_interval$V1, 
-     type = "l", 
-     ylab = "Number of Steps", 
-     xlab = "Interval", 
-     main = "Average Steps Per Time Interval")
+![](PA1_template_files/figure-html/line_plot-1.png)<!-- -->
 
-max_interval_idx <- which.max(avg_by_interval$V1)
-max_interval <- avg_by_interval[104, c('interval')]
-```
-
-Most Active Interval: `r max_interval`
+Most Active Interval: 835
 
 ## Imputing missing values
-```{r imputing}
+
+```r
 #find missing values
 missings <- activity_data[is.na(activity_data$steps),]
 missing_count <- nrow(missings)
@@ -88,7 +66,10 @@ hist(summed_by_day_imputed$V1,
      main = "Number of Steps Per Day Frequency")
 ```
 
-```{r imputed_stats}
+![](PA1_template_files/figure-html/imputing-1.png)<!-- -->
+
+
+```r
 mean_steps_day_imputed <- mean(summed_by_day_imputed$V1)
 median_steps_day_imputed <-  median(summed_by_day_imputed$V1)
 
@@ -96,21 +77,14 @@ mean_diff = (mean_steps_day - mean_steps_day_imputed)/ mean_steps_day
 median_diff = (median_steps_day - median_steps_day_imputed)/ median_steps_day
 ```
 
-Number of missing rows: `r missing_count`
+Number of missing rows: 2304
 
-Mean Steps per day:   `r mean_steps_day_imputed`, 
-Percentage Difference: `r mean_diff`
+Mean Steps per day:   1.0766189\times 10^{4}, 
+Percentage Difference: 0
 
-Median Steps per day: `r median_steps_day_imputed`, 
-Percentage Difference: `r median_diff`
+Median Steps per day: 1.1015\times 10^{4}, 
+Percentage Difference: -0.0232234
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-```{r weekdays_vs_weekends, echo = F}
-xyplot(V1 ~ interval|weekday, 
-       data = weekend_data, 
-       type="l",
-       xlab = "Interval",
-       ylab = "Average Number of Steps",
-       layout = c(1,2))
-```
+![](PA1_template_files/figure-html/weekdays_vs_weekends-1.png)<!-- -->
