@@ -29,6 +29,13 @@ weekend_data <- rbind.fill(avg_by_interval_weekend,
 
 ## What is mean total number of steps taken per day?
 
+
+```r
+hist(summed_by_day$V1, 
+     xlab = "Number of Steps Per Day", 
+     main = "Number of Steps Per Day Frequency")
+```
+
 ![](PA1_template_files/figure-html/histogram_1-1.png)<!-- -->
 
 
@@ -43,18 +50,35 @@ Median Steps per day: 10765
 
 
 ## What is the average daily activity pattern?
+
+```r
+plot(x = avg_by_interval$interval, 
+     y = avg_by_interval$V1, 
+     type = "l", 
+     ylab = "Number of Steps", 
+     xlab = "Interval", 
+     main = "Average Steps Per Time Interval")
+```
+
 ![](PA1_template_files/figure-html/line_plot-1.png)<!-- -->
+
+```r
+max_interval_idx <- which.max(avg_by_interval$V1)
+max_interval <- avg_by_interval[104, c('interval')]
+```
 
 Most Active Interval: 835
 
 ## Imputing missing values
+Use the average for the time interval to replace the missing values
 
 ```r
-#find missing values
+#Find Missings
 missings <- activity_data[is.na(activity_data$steps),]
 missing_count <- nrow(missings)
 merged <- merge(missings, avg_by_interval, by.x = "interval", by.y = "interval")
 
+#Create data frame and set missing values to the averages
 activity_data_imputed <- data.frame(activity_data)
 activity_data_imputed[is.na(activity_data_imputed$steps),]$steps <- merged$V1
 
@@ -86,5 +110,15 @@ Median Steps per day: 1.1015\times 10^{4},
 Percentage Difference: -0.0232234
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+
+```r
+xyplot(V1 ~ interval|weekday, 
+       data = weekend_data, 
+       type="l",
+       xlab = "Interval",
+       ylab = "Average Number of Steps",
+       layout = c(1,2))
+```
 
 ![](PA1_template_files/figure-html/weekdays_vs_weekends-1.png)<!-- -->
